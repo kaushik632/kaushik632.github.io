@@ -1,0 +1,748 @@
+<title>AI Academic Advising</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --bg-card: #121215;
+    --bg-elevated: #1a1a1e;
+    --text: #f0f0f0;
+    --text-secondary: #888;
+    --text-muted: #555;
+    --accent: #D4A017;
+    --accent-hover: #E8B832;
+    --border: #222;
+    --border-light: #2a2a2a;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #0a0a0c; --bg-card: #121215; --bg-elevated: #1a1a1e;
+      --text: #f0f0f0; --text-secondary: #888; --text-muted: #555;
+      --accent: #D4A017; --accent-hover: #E8B832;
+      --border: #222; --border-light: #2a2a2a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #0a0a0c; --bg-card: #121215; --bg-elevated: #1a1a1e;
+    --text: #f0f0f0; --text-secondary: #888; --text-muted: #555;
+    --accent: #D4A017; --accent-hover: #E8B832;
+    --border: #222; --border-light: #2a2a2a;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    padding-inline: 0;
+    overflow-x: hidden;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-inline: clamp(20px, 5vw, 80px);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    text-wrap: balance;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05;
+  }
+  h2 {
+    font-size: clamp(24px, 3vw, 40px);
+    line-height: 1.1;
+    letter-spacing: 0.05em;
+  }
+  h3 {
+    font-size: clamp(16px, 1.8vw, 22px);
+    line-height: 1.2;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: rgba(10, 10, 12, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-inline: clamp(20px, 5vw, 80px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-back {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .nav-indicator {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .nav-linkedin {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid var(--border-light);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-linkedin:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* SECTION SPACING */
+  .cs-section {
+    padding-block: clamp(100px, 14vh, 180px);
+    border-top: 1px solid var(--border);
+  }
+  .cs-section:first-of-type {
+    border-top: none;
+  }
+
+  .section-num {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* HERO */
+  .cs-hero {
+    padding-block: clamp(80px, 12vh, 140px) clamp(60px, 8vh, 100px);
+  }
+  .cs-hero h1 {
+    margin-bottom: 32px;
+  }
+  .cs-hero-subtitle {
+    font-size: clamp(14px, 1.2vw, 16px);
+    color: var(--text-secondary);
+    max-width: 720px;
+    line-height: 1.8;
+    margin-bottom: 48px;
+  }
+
+  /* EXECUTIVE SUMMARY */
+  .exec-summary {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: clamp(28px, 3vw, 48px);
+    margin-bottom: 56px;
+    max-width: 800px;
+  }
+  .exec-summary-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .exec-summary p {
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.9;
+    margin: 0;
+    max-width: 65ch;
+  }
+
+  /* METADATA BAR */
+  .meta-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--border);
+  }
+  .meta-item {
+    background: var(--bg);
+    padding: clamp(20px, 2.5vw, 36px);
+  }
+  .meta-item-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .meta-item-value {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* STAT BLOCKS */
+  .stat-blocks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--border);
+  }
+  .stat-block {
+    background: var(--bg);
+    padding: clamp(28px, 3vw, 44px);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s;
+    border: 1px solid transparent;
+  }
+  .stat-block:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+  .stat-block-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(36px, 4vw, 56px);
+    letter-spacing: 0.02em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .stat-block-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    max-width: 200px;
+    line-height: 1.5;
+  }
+
+  /* BODY CONTENT */
+  .cs-body {
+    max-width: 720px;
+  }
+  .cs-body h2 {
+    margin-bottom: clamp(32px, 4vw, 56px);
+  }
+  .cs-body p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.8;
+    margin: 0 0 24px;
+    max-width: 65ch;
+  }
+  .cs-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* COMPARISON TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 40px 0;
+    font-size: 13px;
+  }
+  .compare-table th {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  .compare-table th:first-child {
+    width: 28%;
+  }
+  .compare-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .compare-table tr:hover td {
+    background: var(--bg-card);
+  }
+  .compare-table .dim-label {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .compare-table .highlight {
+    color: var(--accent);
+  }
+
+  /* STATUS TABLE */
+  .status-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 40px 0;
+    font-size: 13px;
+  }
+  .status-table th {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  .status-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .status-table tr:hover td {
+    background: var(--bg-card);
+  }
+  .status-complete {
+    color: #a8d89a;
+    font-weight: 500;
+  }
+  .status-progress {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .status-planned {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* CALLOUT */
+  .callout {
+    border-left: 2px solid var(--accent);
+    padding: 20px 24px;
+    margin: 32px 0;
+    background: var(--bg-card);
+  }
+  .callout p {
+    color: var(--text) !important;
+    font-size: 13px !important;
+    margin: 0 !important;
+    line-height: 1.8;
+  }
+
+  /* APPROACH LIST */
+  .approach-list {
+    list-style: none;
+    padding: 0;
+    margin: 32px 0;
+  }
+  .approach-list li {
+    position: relative;
+    padding: 16px 0 16px 28px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.8;
+    max-width: 65ch;
+  }
+  .approach-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 24px;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+  }
+
+  /* FOOTER NAV */
+  .cs-footer {
+    border-top: 1px solid var(--border);
+    padding-block: clamp(60px, 8vh, 100px);
+  }
+  .footer-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .footer-link {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-decoration: none;
+    padding: 24px;
+    border: 1px solid var(--border-light);
+    transition: border-color 0.3s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .footer-link:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+  .footer-link-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .footer-link-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding-block: 40px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .meta-bar { grid-template-columns: 1fr 1fr; }
+    .stat-blocks { grid-template-columns: 1fr; }
+    .footer-nav { grid-template-columns: 1fr; }
+    .compare-table { display: block; overflow-x: auto; }
+  }
+  @media (max-width: 600px) {
+    .meta-bar { grid-template-columns: 1fr; }
+    .nav-indicator { display: none; }
+    .nav-inner { flex-wrap: wrap; }
+  }
+
+  /* SCROLL REVEAL */
+  @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-back">&larr; Back to Portfolio</a>
+    <div class="nav-right">
+      <span class="nav-indicator">Case Study // 02</span>
+      <a href="https://www.linkedin.com/in/kaushik-gogi/" target="_blank" rel="noopener" class="nav-linkedin">LinkedIn</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="cs-hero">
+  <div class="wrap">
+    <h1 class="reveal">AI in Academic Advising</h1>
+    <p class="cs-hero-subtitle reveal">
+      A faculty-supervised research project at Missouri S&amp;T that extends the ARGObot advising-chatbot methodology with real job-market data, so curriculum recommendations are grounded in what employers actually need &mdash; not just what the course catalog lists.
+    </p>
+    <div class="exec-summary reveal">
+      <div class="exec-summary-label">Executive Summary</div>
+      <p>
+        Built an AI-assisted advising chatbot for the BS Engineering Management program that pairs the full university course catalog (1,990 courses across 54 departments) with a structured job-market corpus of 42 postings across 7 career interest areas. The system maps employer-cited skill themes to specific courses with confidence ratings, surfacing real curriculum gaps that catalog-only advising misses entirely.
+      </p>
+    </div>
+    <div class="meta-bar reveal">
+      <div class="meta-item">
+        <div class="meta-item-label">Role</div>
+        <div class="meta-item-value">AI Product Manager &amp; Workflow Architect</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-item-label">Domain</div>
+        <div class="meta-item-value">Higher Education &middot; AI &middot; NLP</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-item-label">Tools</div>
+        <div class="meta-item-value">RAG &middot; RAGAs &middot; Python &middot; PDF Parsing</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-item-label">Paper Target</div>
+        <div class="meta-item-value">November 2026</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- AT A GLANCE -->
+<section class="cs-section">
+  <div class="wrap">
+    <div class="stat-blocks reveal">
+      <div class="stat-block">
+        <div class="stat-block-value">1,990</div>
+        <div class="stat-block-label">Courses in Knowledge Base</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-value">42</div>
+        <div class="stat-block-label">Job Postings Analyzed Across 7 Career Areas</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-value">54</div>
+        <div class="stat-block-label">Departments Covered</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 01: THE PROBLEM -->
+<section class="cs-section">
+  <div class="wrap">
+    <div class="section-num">01 &mdash; The Problem</div>
+    <div class="cs-body reveal">
+      <h2>Catalog-Only Advising Misses What Matters</h2>
+      <p>
+        Academic advising for the BS Engineering Management program traditionally recommends emphasis areas and electives based only on the course catalog &mdash; what courses exist &mdash; not on what regional employers are actually asking for.
+      </p>
+      <p>
+        A student choosing between Management of Technology, Industrial Engineering, or a General emphasis has no reliable way to know which option best matches in-demand skills in a field like manufacturing or operations, or where the degree has real skill gaps that need outside coursework or a certification to fill.
+      </p>
+      <div class="callout">
+        <p>Original work in this space (ARGObot) proved that an AI advising chatbot can answer policy questions accurately from a handbook. This project asks a harder question: can the same approach give curriculum advice that's grounded in labor-market evidence, not just document retrieval?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 02: APPROACH -->
+<section class="cs-section">
+  <div class="wrap">
+    <div class="section-num">02 &mdash; Approach</div>
+    <div class="cs-body reveal">
+      <h2>Extending RAG with Job-Market Grounding</h2>
+      <p>
+        The system extends the ARGObot methodology &mdash; retrieval-based and agentic advising chatbot architectures &mdash; from a policy-document domain into curriculum advising, pairing academic data with real employer demand.
+      </p>
+      <ul class="approach-list">
+        <li>Pairs the full university course catalog with a structured job-market corpus, so advising responses can cite specific employer demand alongside course descriptions.</li>
+        <li>Uses deterministic PDF parsing &mdash; not OCR guesswork &mdash; to build a verified, machine-readable course catalog directly from the official 475-page university catalog.</li>
+        <li>Maps employer-cited skill themes to specific courses with confidence ratings (Strong / Moderate / Weak / Gap), so the system can name real coverage gaps instead of glossing over them.</li>
+        <li>Evaluated with a RAGAs-style benchmark and sensitivity testing across job-posting subsets, so advising outputs are auditable rather than just plausible-sounding.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 03: WHAT'S BEEN BUILT -->
+<section class="cs-section">
+  <div class="wrap">
+    <div class="section-num">03 &mdash; What's Been Built</div>
+    <div class="cs-body reveal">
+      <h2>System Components</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Status</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Full university course catalog</td>
+            <td><span class="status-complete">Complete</span></td>
+            <td>1,990 courses parsed from the 2026&ndash;2027 undergraduate catalog (475 pages), deterministically extracted and verified</td>
+          </tr>
+          <tr>
+            <td>Job-market corpus</td>
+            <td><span class="status-complete">Complete</span></td>
+            <td>42 job postings across 7 career interest areas, processed into a structured skill/requirement dataset</td>
+          </tr>
+          <tr>
+            <td>Skill-coverage gap analysis</td>
+            <td><span class="status-complete">Complete</span></td>
+            <td>Maps employer-cited skill themes to specific courses with confidence ratings, surfacing real curriculum gaps</td>
+          </tr>
+          <tr>
+            <td>Evaluation benchmark</td>
+            <td><span class="status-complete">Complete</span></td>
+            <td>32-question RAGAs-style benchmark spanning catalog-only, job-market-only, and hybrid-synthesis question types</td>
+          </tr>
+          <tr>
+            <td>Sensitivity testing</td>
+            <td><span class="status-complete">Complete</span></td>
+            <td>Job-market corpus subsets compared to confirm advising outputs are stable rather than artifacts of any single posting</td>
+          </tr>
+          <tr>
+            <td>Proof-of-concept experiment</td>
+            <td><span class="status-complete">Complete</span></td>
+            <td>Side-by-side comparison demonstrating what job-market grounding changes for a real advising scenario</td>
+          </tr>
+          <tr>
+            <td>Full 32-question evaluation</td>
+            <td><span class="status-progress">In Progress</span></td>
+            <td>Running the complete benchmark across all question types</td>
+          </tr>
+          <tr>
+            <td>Deployable chatbot pilot</td>
+            <td><span class="status-planned">Planned</span></td>
+            <td>Pilot student testing with live advising sessions</td>
+          </tr>
+          <tr>
+            <td>Research paper submission</td>
+            <td><span class="status-planned">Planned</span></td>
+            <td>Targeted for November 2026</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 04: PROOF OF CONCEPT -->
+<section class="cs-section">
+  <div class="wrap">
+    <div class="section-num">04 &mdash; Proof of Concept</div>
+    <div class="cs-body reveal">
+      <h2>The Kenji Martin Experiment</h2>
+      <p>
+        To test what the job-market extension actually changes, the project ran a controlled comparison: the same student profile and the same advising question, answered twice &mdash; once with only the course catalog available, and once with the catalog plus job-market data.
+      </p>
+      <p>
+        <strong style="color: var(--text);">Student profile:</strong> Kenji Martin, a junior in BS Engineering Management who has completed the Foundation and EMGT Core tiers and is choosing an emphasis area, with a stated interest in Manufacturing/Operations.
+      </p>
+      <p>
+        <strong style="color: var(--text);">Question:</strong> &ldquo;Which emphasis area and electives should I choose?&rdquo;
+      </p>
+    </div>
+    <table class="compare-table reveal" style="margin-top: 40px;">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>Catalog-Only Advising</th>
+          <th>Catalog + Job-Market Advising</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim-label">Emphasis-area ranking</td>
+          <td>Generic topic-proximity guess</td>
+          <td class="highlight">Ranked by employer-demand match, citing specific posting frequencies</td>
+        </tr>
+        <tr>
+          <td class="dim-label">General-emphasis guidance</td>
+          <td>&ldquo;Pick whichever discipline appeals to you&rdquo;</td>
+          <td class="highlight">Names a specific discipline tied to the two highest-demand skill gaps, with real course-availability counts</td>
+        </tr>
+        <tr>
+          <td class="dim-label">Elective recommendation</td>
+          <td>Generic (&ldquo;well-regarded courses&rdquo;)</td>
+          <td class="highlight">A specific course, ranked by how many in-demand skills it covers</td>
+        </tr>
+        <tr>
+          <td class="dim-label">Skill gaps with no course</td>
+          <td>Invisible to the system</td>
+          <td class="highlight">Surfaced explicitly, with a non-course remedy (e.g., a certification)</td>
+        </tr>
+        <tr>
+          <td class="dim-label">Claims traceable to evidence</td>
+          <td>No &mdash; reasoning is topical</td>
+          <td class="highlight">Yes &mdash; every recommendation cites a specific employer data point</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="cs-body reveal" style="margin-top: 48px;">
+      <div class="callout">
+        <p>Curriculum data alone can describe what exists. Only labor-market data can say what's actually worth prioritizing, and where the real gaps are. The same student, asking the same question, gets categorically different advice depending on whether job-market grounding is available: specific, ranked, and evidence-backed instead of generic and associative.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 05: WHY IT MATTERS -->
+<section class="cs-section">
+  <div class="wrap">
+    <div class="section-num">05 &mdash; Why It Matters</div>
+    <div class="cs-body reveal">
+      <h2>From Generic to Evidence-Backed</h2>
+      <p>
+        The core contribution this project demonstrates is that adding structured labor-market data to an AI advising system fundamentally changes the quality of advice &mdash; from generic course-catalog retrieval to specific, ranked, evidence-backed recommendations.
+      </p>
+      <p>
+        Every claim the system makes is traceable to a specific employer data point. Skill gaps that are invisible to catalog-only systems are surfaced explicitly, along with actionable remedies. Students get advice grounded in what regional employers are actually hiring for, not just what the course catalog happens to list.
+      </p>
+    </div>
+
+    <div class="stat-blocks reveal" style="margin-top: 56px;">
+      <div class="stat-block">
+        <div class="stat-block-value">32</div>
+        <div class="stat-block-label">Evaluation Questions in Benchmark</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-value">7</div>
+        <div class="stat-block-label">Career Interest Areas Mapped</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-value">475</div>
+        <div class="stat-block-label">Pages of Catalog Parsed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER NAV -->
+<div class="cs-footer">
+  <div class="wrap">
+    <div class="footer-nav">
+      <a href="index.html" class="footer-link">
+        <span class="footer-link-label">Back</span>
+        <span class="footer-link-title">&larr; Portfolio</span>
+      </a>
+      <a href="case-study-nhtsa.html" class="footer-link">
+        <span class="footer-link-label">Previous Case Study</span>
+        <span class="footer-link-title">NHTSA Risk Model</span>
+      </a>
+      <a href="https://www.linkedin.com/in/kaushik-gogi/" target="_blank" rel="noopener" class="footer-link">
+        <span class="footer-link-label">Connect</span>
+        <span class="footer-link-title">LinkedIn &rarr;</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">&copy; 2026 Kaushik Gogi</div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  });
+</script>
