@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kaushik Gogi</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <style>
@@ -496,17 +498,47 @@
     letter-spacing: 0.05em;
   }
 
-  /* RESPONSIVE */
+  /* HAMBURGER BUTTON (hidden on desktop) */
+  .nav-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 201;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text-primary);
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .nav-hamburger span + span {
+    margin-top: 6px;
+  }
+  .nav-hamburger.is-open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .nav-hamburger.is-open span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-hamburger.is-open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  /* MOBILE OVERLAY */
+  .nav-overlay {
+    display: none;
+  }
+
+  /* RESPONSIVE — TABLET */
   @media (max-width: 900px) {
     .hero-bg {
       width: 100%;
       opacity: 0.15;
       mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 80%);
       -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 80%);
-    }
-    .hero-stats-bar {
-      grid-template-columns: 1fr;
-      gap: 24px;
     }
     .work-grid {
       grid-template-columns: 1fr;
@@ -517,23 +549,166 @@
     .background-grid {
       grid-template-columns: 1fr;
     }
-    .nav-links {
-      gap: 20px;
-    }
   }
 
+  /* RESPONSIVE — MOBILE */
   @media (max-width: 600px) {
-    .nav-inner {
+    /* Hamburger nav */
+    .nav-hamburger {
+      display: flex;
       flex-direction: column;
+      gap: 0;
+    }
+    .nav-links {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      background: #0A0A0A;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      z-index: 200;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .nav-links.is-open {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .nav-links a {
+      font-size: 18px;
+      letter-spacing: 0.15em;
+      color: var(--text-primary);
+    }
+    .nav-overlay {
+      display: none;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: auto;
+      padding-block: 60px 48px;
+    }
+    .hero-content {
+      gap: 32px;
+    }
+    h1 {
+      font-size: 24px;
+      letter-spacing: 0.01em;
+    }
+    .hero-sub {
+      font-size: 12px;
+    }
+    .hero-cta {
+      padding: 14px 28px;
+      font-size: 12px;
+    }
+    .hero-stats-bar {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 40px;
+      padding-top: 32px;
+    }
+    .hero-stat {
+      padding: 8px;
+    }
+    .hero-stat-value {
+      font-size: 18px;
+    }
+    .hero-stat-label {
+      font-size: 9px;
+    }
+
+    /* Sections */
+    section {
+      padding-block: 64px;
+    }
+    .section-label {
+      margin-bottom: 28px;
+      font-size: 10px;
+    }
+    h2 {
+      font-size: 24px;
+    }
+
+    /* Work cards */
+    .work-card {
+      padding: 28px 20px;
       gap: 16px;
+    }
+    .work-card h3 {
+      font-size: 16px;
+    }
+    .work-card-summary {
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .work-card-role {
+      font-size: 10px;
+      padding-top: 12px;
+    }
+    .work-card-tag {
+      font-size: 9px;
+      padding: 4px 8px;
+    }
+
+    /* Capabilities */
+    .capability-card {
+      padding: 28px 20px;
+      gap: 20px;
+    }
+    .capability-card h3 {
+      font-size: 16px;
+    }
+    .capability-list li {
+      font-size: 12px;
+    }
+
+    /* Background */
+    .background-grid {
+      gap: 32px;
+    }
+    .background-block h3 {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .background-item {
+      padding-block: 16px;
+    }
+    .background-item-title {
+      font-size: 13px;
+    }
+    .background-item-detail {
+      font-size: 11px;
+    }
+
+    /* Contact */
+    .contact-section {
+      gap: 32px;
     }
     .contact-links {
       flex-direction: column;
       width: 100%;
-      max-width: 320px;
     }
     .contact-link {
       justify-content: center;
+      padding: 12px 20px;
+      font-size: 11px;
+    }
+    .contact-form {
+      gap: 16px;
+    }
+
+    /* Footer */
+    footer {
+      padding-block: 40px;
     }
   }
 
@@ -661,6 +836,9 @@
 <nav>
   <div class="nav-inner">
     <a href="#" class="nav-logo">Kaushik Gogi</a>
+    <button class="nav-hamburger" aria-label="Menu" onclick="this.classList.toggle('is-open'); document.querySelector('.nav-links').classList.toggle('is-open');">
+      <span></span><span></span><span></span>
+    </button>
     <ul class="nav-links">
       <li><a href="#work">Work</a></li>
       <li><a href="#capabilities">Capabilities</a></li>
@@ -878,6 +1056,11 @@
         if (target) {
           e.preventDefault();
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Close mobile menu if open
+          var navMenu = document.querySelector('.nav-links');
+          var burger = document.querySelector('.nav-hamburger');
+          if (navMenu) navMenu.classList.remove('is-open');
+          if (burger) burger.classList.remove('is-open');
         }
       });
     });
