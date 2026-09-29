@@ -591,7 +591,15 @@
       display: none;
     }
 
-    /* Hero */
+    /* Hero — keep photo visible like desktop */
+    .hero-bg {
+      opacity: 0.22;
+      width: 100%;
+      right: 0;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 85%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 85%);
+      background-position: center top;
+    }
     .hero {
       min-height: auto;
       padding-block: 60px 48px;
