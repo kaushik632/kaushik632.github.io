@@ -121,13 +121,15 @@
   /* HERO */
   .hero {
     min-height: calc(100vh - 80px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto;
+    align-items: center;
     padding-block: clamp(80px, 10vh, 96px);
     width: 100%;
     position: relative;
     overflow: hidden;
+    gap: 0 clamp(32px, 4vw, 64px);
   }
   .hero-bg {
     position: absolute;
@@ -145,12 +147,14 @@
     z-index: 0;
   }
   .hero-content {
+    grid-column: 1;
+    grid-row: 1;
     display: flex;
     flex-direction: column;
     gap: 48px;
-    max-width: 900px;
     position: relative;
     z-index: 1;
+    min-width: 0;
   }
   .hero-sub {
     max-width: 520px;
@@ -185,11 +189,6 @@
     width: 16px;
     height: 16px;
   }
-  .hero-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
   .hero-stat-value {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
@@ -207,16 +206,96 @@
 
   /* HERO STATS BAR */
   .hero-stats-bar {
+    grid-column: 1 / -1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: clamp(24px, 3vw, 48px);
-    width: 100%;
-    margin-top: clamp(56px, 8vh, 96px);
-    padding-top: clamp(40px, 5vh, 64px);
-    border-top: 1px solid var(--border);
+    gap: 2px;
+    background: var(--border);
+    margin-top: clamp(40px, 6vh, 64px);
     position: relative;
     z-index: 1;
   }
+  .hero-stat {
+    background: var(--bg-surface);
+    padding: clamp(20px, 2.5vw, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid transparent;
+    transition: border-color 0.3s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hero-stat:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+
+  /* HERO ARCHITECTURE CARD */
+  .hero-arch {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-self: center;
+    min-width: 0;
+  }
+  .arch-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    padding: clamp(24px, 2.5vw, 40px);
+    transition: border-color 0.3s;
+  }
+  .arch-card:hover {
+    border-color: var(--accent);
+  }
+  .arch-card + .arch-card {
+    border-top: none;
+  }
+  .arch-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .arch-pipeline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .arch-node {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .arch-node--accent {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .arch-arrow {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .arch-snippet {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    overflow-x: auto;
+  }
+  .arch-snippet .kw { color: var(--accent); }
+  .arch-snippet .fn { color: #7EC8E3; }
+  .arch-snippet .cm { color: var(--text-muted); font-style: italic; }
 
   /* SECTIONS */
   section {
@@ -304,20 +383,71 @@
     border: 1px solid var(--border-light);
     padding: 6px 12px;
   }
+  .work-card-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 3vw, 48px);
+    align-items: start;
+  }
+  .work-card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .work-card-preview {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-size: 12px;
+    min-width: 0;
+  }
+  .work-card-preview-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .work-card-preview-code {
+    font-size: 11px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .work-card-preview-code .kw { color: var(--accent); }
+  .work-card-preview-code .fn { color: #7EC8E3; }
+  .work-card-preview-code .cm { color: var(--text-muted); font-style: italic; }
+  .work-card-preview-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .work-card-preview-tag {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--border-light);
+    color: var(--accent);
+  }
 
-  /* CAPABILITIES */
+  /* CAPABILITIES — BENTO GRID */
   .capabilities-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
     gap: 2px;
     background: var(--border);
   }
   .capability-card {
     background: var(--bg);
-    padding: clamp(40px, 4vw, 64px);
+    padding: clamp(32px, 2.5vw, 40px);
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 24px;
     border: 1px solid transparent;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -328,10 +458,21 @@
     border-color: var(--accent);
     box-shadow: 0 8px 24px rgba(212, 160, 23, 0.06);
   }
+  .capability-card--large {
+    grid-row: 1 / 3;
+  }
   .capability-card h3 {
     text-transform: uppercase;
     font-size: clamp(16px, 1.8vw, 22px);
     letter-spacing: 0.05em;
+  }
+  .capability-card-icon {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
   }
   .capability-list {
     list-style: none;
@@ -355,6 +496,25 @@
     width: 4px;
     height: 4px;
     background: var(--text-muted);
+  }
+  .tech-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tech-badge {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    padding: 8px 16px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .tech-badge:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   /* BACKGROUND */
@@ -534,17 +694,35 @@
 
   /* RESPONSIVE — TABLET */
   @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
     .hero-bg {
       width: 100%;
       opacity: 0.15;
       mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 80%);
       -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 80%);
     }
+    .hero-content {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+    .hero-arch {
+      grid-column: 1 / -1;
+      grid-row: auto;
+      margin-top: 40px;
+    }
     .work-grid {
+      grid-template-columns: 1fr;
+    }
+    .work-card-inner {
       grid-template-columns: 1fr;
     }
     .capabilities-grid {
       grid-template-columns: 1fr;
+    }
+    .capability-card--large {
+      grid-row: auto;
     }
     .background-grid {
       grid-template-columns: 1fr;
@@ -592,6 +770,11 @@
     }
 
     /* Hero — keep photo visible like desktop */
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      padding-block: 60px 48px;
+    }
     .hero-bg {
       opacity: 0.25;
       width: 100%;
@@ -600,12 +783,24 @@
       -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 85%);
       background-position: 65% top;
     }
-    .hero {
-      min-height: auto;
-      padding-block: 60px 48px;
-    }
     .hero-content {
       gap: 32px;
+    }
+    .hero-arch {
+      margin-top: 32px;
+    }
+    .arch-pipeline {
+      gap: 8px;
+    }
+    .arch-node {
+      font-size: 11px;
+      padding: 8px 12px;
+    }
+    .work-card-inner {
+      grid-template-columns: 1fr;
+    }
+    .work-card-preview {
+      display: none;
     }
     h1 {
       font-size: 24px;
@@ -718,18 +913,6 @@
     footer {
       padding-block: 40px;
     }
-  }
-
-  /* STAT HOVER */
-  .hero-stat {
-    padding: 12px 16px;
-    border: 1px solid transparent;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .hero-stat:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent);
   }
 
   /* CUSTOM CURSOR */
@@ -874,6 +1057,28 @@
         </svg>
       </a>
     </div>
+
+    <!-- Architecture Card -->
+    <div class="hero-arch">
+      <div class="arch-card">
+        <div class="arch-label">System Architecture — NHTSA Risk Model</div>
+        <div class="arch-pipeline">
+          <span class="arch-node">Raw Data</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-node">FMEA Engine</span>
+          <span class="arch-arrow">→</span>
+          <span class="arch-node arch-node--accent">13x Severity Triage</span>
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-snippet"><span class="kw">SELECT</span> component,
+  <span class="fn">SUM</span>(severity * frequency) <span class="kw">AS</span> rpn,
+  <span class="fn">RANK</span>() <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> rpn <span class="kw">DESC</span>)
+<span class="kw">FROM</span> nhtsa_complaints
+<span class="kw">GROUP BY</span> component; <span class="cm">-- 10k records</span></div>
+      </div>
+    </div>
+
     <div class="hero-stats-bar">
       <div class="hero-stat">
         <span class="hero-stat-value">10 hrs/wk</span>
@@ -898,43 +1103,95 @@
     <div class="work-grid">
       <a href="case-study-nhtsa.html" class="work-card work-card-link reveal">
         <span class="work-card-number">Project 01</span>
-        <h3>NHTSA Vehicle Defect Risk Prioritization Model</h3>
-        <p class="work-card-summary">
-          Built a severity-weighted FMEA risk model analyzing ~10,000 NHTSA safety complaints, elevating high-risk safety defect categories with 13x higher severity rates to drive data-driven recall prioritization.
-        </p>
-        <div class="work-card-tags">
-          <span class="work-card-tag">SQL</span>
-          <span class="work-card-tag">Power BI</span>
-          <span class="work-card-tag">FMEA</span>
-          <span class="work-card-tag">Data Product</span>
+        <div class="work-card-inner">
+          <div class="work-card-text">
+            <h3>NHTSA Vehicle Defect Risk Prioritization Model</h3>
+            <p class="work-card-summary">
+              Built a severity-weighted FMEA risk model analyzing ~10,000 NHTSA safety complaints, elevating high-risk safety defect categories with 13x higher severity rates to drive data-driven recall prioritization.
+            </p>
+            <div class="work-card-tags">
+              <span class="work-card-tag">SQL</span>
+              <span class="work-card-tag">Power BI</span>
+              <span class="work-card-tag">FMEA</span>
+              <span class="work-card-tag">Data Product</span>
+            </div>
+          </div>
+          <div class="work-card-preview">
+            <span class="work-card-preview-label">Logic Preview</span>
+            <div class="work-card-preview-code"><span class="kw">SELECT</span> component_group,
+  <span class="fn">AVG</span>(severity_score) <span class="kw">AS</span> avg_sev,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> complaint_ct
+<span class="kw">FROM</span> nhtsa_fmea
+<span class="kw">WHERE</span> rpn > 200
+<span class="kw">GROUP BY</span> 1;</div>
+            <div class="work-card-preview-tags">
+              <span class="work-card-preview-tag">Window Functions</span>
+              <span class="work-card-preview-tag">RPN Scoring</span>
+              <span class="work-card-preview-tag">DAX</span>
+            </div>
+          </div>
         </div>
         <span class="work-card-role">Lead Data Analyst &amp; Systems Designer <span class="work-card-arrow">&rarr;</span></span>
       </a>
 
       <a href="case-study-advising.html" class="work-card work-card-link reveal">
         <span class="work-card-number">Project 02</span>
-        <h3>AI Academic Advising Workflow Automation</h3>
-        <p class="work-card-summary">
-          Designed and prototyped an AI-driven advising workflow tool that streamlined student query triage, saving advisors 10 hours per week and reducing response latency.
-        </p>
-        <div class="work-card-tags">
-          <span class="work-card-tag">Generative AI</span>
-          <span class="work-card-tag">Product Discovery</span>
-          <span class="work-card-tag">Workflow Design</span>
+        <div class="work-card-inner">
+          <div class="work-card-text">
+            <h3>AI Academic Advising Workflow Automation</h3>
+            <p class="work-card-summary">
+              Designed and prototyped an AI-driven advising workflow tool that streamlined student query triage, saving advisors 10 hours per week and reducing response latency.
+            </p>
+            <div class="work-card-tags">
+              <span class="work-card-tag">Generative AI</span>
+              <span class="work-card-tag">Product Discovery</span>
+              <span class="work-card-tag">Workflow Design</span>
+            </div>
+          </div>
+          <div class="work-card-preview">
+            <span class="work-card-preview-label">Triage Pipeline</span>
+            <div class="work-card-preview-code"><span class="cm">// AI Agent Routing</span>
+<span class="kw">if</span> intent == <span class="fn">"schedule"</span>:
+  <span class="fn">route_to</span>(calendar_agent)
+<span class="kw">elif</span> intent == <span class="fn">"course_rec"</span>:
+  <span class="fn">query_catalog</span>(1990, depts=54)</div>
+            <div class="work-card-preview-tags">
+              <span class="work-card-preview-tag">Prompt Design</span>
+              <span class="work-card-preview-tag">Agent Routing</span>
+              <span class="work-card-preview-tag">NLP</span>
+            </div>
+          </div>
         </div>
         <span class="work-card-role">AI Product Manager &amp; Workflow Architect <span class="work-card-arrow">&rarr;</span></span>
       </a>
 
       <a href="case-study-hatliner.html" class="work-card work-card-link reveal">
         <span class="work-card-number">Project 03</span>
-        <h3>Bamboo Nano Hat Liner</h3>
-        <p class="work-card-summary">
-          Designed a reusable three-layer cap liner from user research through CAD, FMEA risk analysis, and NPV financial modeling &mdash; validated with a functional 3D-printed prototype at $7.50/unit.
-        </p>
-        <div class="work-card-tags">
-          <span class="work-card-tag">Product Design</span>
-          <span class="work-card-tag">FMEA</span>
-          <span class="work-card-tag">IPPD</span>
+        <div class="work-card-inner">
+          <div class="work-card-text">
+            <h3>Bamboo Nano Hat Liner</h3>
+            <p class="work-card-summary">
+              Designed a reusable three-layer cap liner from user research through CAD, FMEA risk analysis, and NPV financial modeling &mdash; validated with a functional 3D-printed prototype at $7.50/unit.
+            </p>
+            <div class="work-card-tags">
+              <span class="work-card-tag">Product Design</span>
+              <span class="work-card-tag">FMEA</span>
+              <span class="work-card-tag">IPPD</span>
+            </div>
+          </div>
+          <div class="work-card-preview">
+            <span class="work-card-preview-label">Risk Model</span>
+            <div class="work-card-preview-code"><span class="cm">-- FMEA Risk Priority</span>
+<span class="kw">RPN</span> = Severity × Occurrence
+        × Detection
+<span class="fn">NPV</span> = $7.50/unit @ 85% margin
+<span class="kw">BOM</span>: 3-layer bamboo composite</div>
+            <div class="work-card-preview-tags">
+              <span class="work-card-preview-tag">SolidWorks</span>
+              <span class="work-card-preview-tag">FMEA</span>
+              <span class="work-card-preview-tag">NPV</span>
+            </div>
+          </div>
         </div>
         <span class="work-card-role">Product Designer &amp; FMEA Lead <span class="work-card-arrow">&rarr;</span></span>
       </a>
@@ -947,16 +1204,20 @@
     <h2 style="margin-bottom: clamp(56px, 8vw, 96px);">What I Bring.</h2>
 
     <div class="capabilities-grid">
-      <div class="capability-card reveal">
-        <h3>AI &amp; Workflow Engineering</h3>
+      <div class="capability-card capability-card--large reveal">
+        <div class="capability-card-icon">01 — Primary</div>
+        <h3>AI Workflow Engineering</h3>
         <ul class="capability-list">
           <li>Generative AI Integration</li>
           <li>AI Agent Triage Systems</li>
+          <li>Prompt Architecture &amp; Evaluation</li>
           <li>Workflow Automation Design</li>
           <li>Technical Tradeoff Analysis</li>
+          <li>LLM Pipeline Orchestration</li>
         </ul>
       </div>
       <div class="capability-card reveal">
+        <div class="capability-card-icon">02 — Strategy</div>
         <h3>Product Strategy &amp; Execution</h3>
         <ul class="capability-list">
           <li>Customer Discovery &amp; PRDs</li>
@@ -966,13 +1227,29 @@
         </ul>
       </div>
       <div class="capability-card reveal">
-        <h3>Analytics &amp; Systems Modeling</h3>
+        <div class="capability-card-icon">03 — Analytics</div>
+        <h3>Analytics &amp; Data Modeling</h3>
         <ul class="capability-list">
           <li>SQL Window Functions</li>
           <li>Power BI Dashboards</li>
           <li>FMEA Risk Modeling</li>
           <li>Root-Cause Analysis</li>
         </ul>
+      </div>
+      <div class="capability-card reveal" style="grid-column: 1 / -1;">
+        <div class="capability-card-icon">04 — Technical Stack</div>
+        <div class="tech-badges">
+          <span class="tech-badge">SQL</span>
+          <span class="tech-badge">Python</span>
+          <span class="tech-badge">Power BI</span>
+          <span class="tech-badge">DAX</span>
+          <span class="tech-badge">SolidWorks</span>
+          <span class="tech-badge">Agile / Scrum</span>
+          <span class="tech-badge">Jira</span>
+          <span class="tech-badge">Generative AI</span>
+          <span class="tech-badge">Prompt Engineering</span>
+          <span class="tech-badge">Figma</span>
+        </div>
       </div>
     </div>
   </section>
@@ -1038,7 +1315,7 @@
       <div class="contact-links">
         <a href="mailto:kaushik.g6320@gmail.com" class="contact-link contact-link--primary">Email Directly</a>
         <a href="https://www.linkedin.com/in/kaushik-gogi/" target="_blank" rel="noopener" class="contact-link">LinkedIn</a>
-        <a href="#" class="contact-link">Download Resume</a>
+        <a href="Kaushik_Gogi_Resume.pdf" target="_blank" class="contact-link">Download Resume</a>
       </div>
 
       <p class="contact-email">kaushik.g6320@gmail.com</p>
